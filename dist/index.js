@@ -23633,6 +23633,7 @@ async function run() {
     const waitForCompletion = getInput("wait-for-completion") === "true";
     const syncStatus = getInput("sync-status") === "true";
     const timeoutSeconds = parseInt(getInput("wait-timeout-seconds") || "900", 10);
+    const waitIntervalSeconds = parseInt(getInput("wait-interval-seconds") || "5", 10);
     let runStatus = "in_progress";
     if (waitForCompletion) {
       info(`\u23F3 Waiting for workflow run to complete with a timeout of ${timeoutSeconds} seconds...`);
@@ -23646,7 +23647,7 @@ Note: The workflow is still running but we have stopped waiting. You can check t
           runStatus = "timed_out";
           break;
         }
-        await new Promise((resolve) => setTimeout(resolve, 5e3));
+        await new Promise((resolve) => setTimeout(resolve, waitIntervalSeconds * 1e3));
         const { data: runData } = await octokit.request(
           `GET /repos/${owner}/${repo}/actions/runs/${dispatchResp.data.workflow_run_id}`
         );
